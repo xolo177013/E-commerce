@@ -1,2 +1,0 @@
-these a, b ,c in these 3 folders are just
-to commit them in github as empth folder can't be commited without .gitkeep
