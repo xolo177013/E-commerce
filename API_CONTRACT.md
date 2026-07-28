@@ -141,10 +141,99 @@ Authorization: Bearer <access_token>
 
 ---
 
+## 5. List all products
+
+**GET** `/api/products/`
+
+No authentication required — public endpoint.
+
+**Success response — `200 OK`:**
+```json
+[
+    {
+        "id": 1,
+        "name": "Classic Crew Neck Tee",
+        "slug": "classic-crew-neck-tee",
+        "description": "...",
+        "base_price": "499.00",
+        "is_active": true,
+        "category": {
+            "id": 3,
+            "name": "T-Shirts",
+            "slug": "t-shirts",
+            "parent": 1
+        },
+        "variants": [
+            {
+                "id": 1,
+                "size": "M",
+                "color": "Black",
+                "sku": "TEE-BLK-M",
+                "price_override": null,
+                "stock_quantity": 20
+            },
+            {
+                "id": 2,
+                "size": "L",
+                "color": "Black",
+                "sku": "TEE-BLK-L",
+                "price_override": null,
+                "stock_quantity": 15
+            }
+        ],
+        "images": [
+            {
+                "id": 1,
+                "image": "http://127.0.0.1:8000/media/products/tee-front.jpg",
+                "alt_text": "Black crew neck tee, front view",
+                "is_primary": true
+            }
+        ]
+    }
+]
+```
+
+**Frontend notes:** only active (`is_active: true`) products are ever returned — no need to filter client-side. Use `price_override` if not null for a given variant's actual price; otherwise fall back to the product's `base_price`.
+
+---
+
+## 6. Get a single product
+
+**GET** `/api/products/<slug>/`
+
+Example: `/api/products/classic-crew-neck-tee/`
+
+No authentication required — public endpoint.
+
+**Success response — `200 OK`:** same shape as a single item from the list endpoint above.
+
+**Error — `404 Not Found`** if the slug doesn't exist or the product is inactive.
+
+---
+
+## 7. List all categories
+
+**GET** `/api/categories/`
+
+No authentication required — public endpoint.
+
+**Success response — `200 OK`:**
+```json
+[
+    { "id": 1, "name": "Electronics", "slug": "electronics", "parent": null },
+    { "id": 2, "name": "Phones", "slug": "phones", "parent": 1 },
+    { "id": 3, "name": "Smartphones", "slug": "smartphones", "parent": 2 }
+]
+```
+
+**Frontend notes:** this is a flat list. `parent` is the numeric ID of the parent category, or `null` for top-level categories. If a nested tree UI is needed (e.g., expandable sidebar), build it client-side from this flat list using the `parent` field — the backend does not currently return a pre-nested tree structure.
+
+---
+
 ## What's coming next (not built yet — don't build UI for these until this doc is updated)
 
-- Product catalog endpoints (browse products, categories)
 - Cart endpoints
 - Order/checkout endpoints
+- Reviews (deferred until Orders exist, to support verified-purchase rules)
 
 This document will be updated as each new feature is completed and tested. Always check for the latest version before building against a new endpoint.
